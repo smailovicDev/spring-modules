@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.demo.services.UserDetailsServiceImpl;
 
@@ -33,12 +34,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter  {
 	protected void configure(HttpSecurity http) throws Exception {
 		
 		http.csrf().disable();
-//		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.authorizeRequests().antMatchers("/error").permitAll();
 		http.formLogin().permitAll();
-		http.formLogin().successForwardUrl("/tasks");
+		http.formLogin().defaultSuccessUrl("/tasks");
 		http.authorizeRequests().anyRequest().authenticated();
-		
+		http.addFilter( new JWTAuthenticationFilter( authenticationManager() )  );
+		http.addFilterBefore( new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class  );
 		
 	}
 	
