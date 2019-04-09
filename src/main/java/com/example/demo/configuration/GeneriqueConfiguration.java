@@ -1,5 +1,6 @@
 package com.example.demo.configuration;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -23,11 +24,13 @@ public class GeneriqueConfiguration {
 	public CommandLineRunner start( TasksService ts, AppRolesService r, AppUsersService u ) {
 		
 		return args -> {
-			ts.save( new Task(null, "T1", "Hello T1" ));
-			ts.save( new Task(null, "T2", "Hello T2" ));
-			ts.save( new Task(null, "T3", "Hello T3" ));
-			ts.save( new Task(null, "T4", "Hello T4" ));
-			ts.save( new Task(null, "T5", "Hello T5" ));
+			ZonedDateTime z = ZonedDateTime.now().plusDays(2);
+			System.out.println(z);
+			ts.save( new Task(null, "T1", "Hello T1", 0L, ZonedDateTime.now(), z , false,  0  ));
+			ts.save( new Task(null, "T2", "Hello T2", 0L, ZonedDateTime.now(), z, false,  0   ));
+			ts.save( new Task(null, "T3", "Hello T3", 0L, ZonedDateTime.now(), z, false,  0   ));
+			ts.save( new Task(null, "T4", "Hello T4", 0L, ZonedDateTime.now(), z, false,  0   ));
+			ts.save( new Task(null, "T5", "Hello T5", 0L, ZonedDateTime.now(), z, false,  0   ));
 			List<AppRole> l = new ArrayList<>();
 			Stream.of("ADMIN", "SUPER_ADMIN", "USER" ).forEach(s -> {
 				l.add(r.save( new AppRole(null, s)));

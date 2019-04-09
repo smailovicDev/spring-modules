@@ -52,21 +52,23 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			// get User from inputStream and cast it by jakson to AppUser object 
 			
 			AppUser appUser = new ObjectMapper().readValue( request.getInputStream() ,AppUser.class);
-			System.out.println( appUser );
+			
 			// Authenticate the user by authenticationManager and return the result authentication
 			return authenticationManager.authenticate( 
 					new UsernamePasswordAuthenticationToken(appUser.getLogin(), appUser.getPassword()));
 		}catch( Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new RuntimeException("Authentication error !!");
+			
 		}
 	}
 
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
+		
 		// get User form authentication object ( spring security user org.springframework.security.core.userdetails.User )
 		User user = (User) authResult.getPrincipal();
+		
 		// get User roles from authentication result and store them in arrayList of String
 		List<String> authorities = new ArrayList<>();
 		authResult.getAuthorities().forEach(a -> {
@@ -77,12 +79,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 				.withIssuer(request.getRequestURI())
 				.withSubject(user.getUsername())
 				.withArrayClaim("roles", authorities.toArray(new String[ authorities.size()]))
-				.withExpiresAt(new Date(System.currentTimeMillis()+ 3600*24*10))
+				.withExpiresAt(new Date(System.currentTimeMillis()+ 3600*10*24))
 				.sign(Algorithm.HMAC256(SecurityConstants.SECRET.getValue()));
-		
-		System.out.println( jwt );
-		
-		response.setHeader(SecurityConstants.AUTHORIZATION.getValue(), SecurityConstants.TOKENPREFIX.getValue() + jwt);
+
+		System.out.println(jwt);
+		response.addHeader(SecurityConstants.AUTHORIZATION.getValue(), SecurityConstants.TOKENPREFIX.getValue() + jwt);
 	}
 
 	

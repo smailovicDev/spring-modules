@@ -1,5 +1,7 @@
 package com.example.demo.entities;
 
+import java.time.ZonedDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -16,11 +18,31 @@ import lombok.ToString;
 public class Task {
 	
 	@Id @GeneratedValue
-	private Long idTask;
+	private Long id;
+	
 	@JsonProperty("taskName")
 	private String taskName;
+	
 	@JsonProperty("description")
 	private String description;
+	
+	@JsonProperty("serId")
+	private long serId;
+	
+	@JsonProperty("dateCreation")
+	private ZonedDateTime dateCreation; 
+	
+	@JsonProperty("dateFin")
+	private ZonedDateTime dateFin; 
+	
+	@JsonProperty("status")
+	private boolean status; 
+	
+	@JsonProperty("pourcent")
+	private double pourcent; 
+	
+	
+	
 	
 
 }
