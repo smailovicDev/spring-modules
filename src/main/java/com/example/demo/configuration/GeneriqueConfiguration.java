@@ -1,5 +1,6 @@
 package com.example.demo.configuration;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -8,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.entities.AppRole;
 import com.example.demo.entities.AppUser;
@@ -23,11 +25,11 @@ public class GeneriqueConfiguration {
 	public CommandLineRunner start( TasksService ts, AppRolesService r, AppUsersService u ) {
 		
 		return args -> {
-			ts.save( new Task(null, "T1", "Hello T1" ));
-			ts.save( new Task(null, "T2", "Hello T2" ));
-			ts.save( new Task(null, "T3", "Hello T3" ));
-			ts.save( new Task(null, "T4", "Hello T4" ));
-			ts.save( new Task(null, "T5", "Hello T5" ));
+			ts.save( new Task(null, "T1", "Hello T1", 1234,  ZonedDateTime.now(), ZonedDateTime.now(), true, 20 ));
+			ts.save( new Task(null, "T2", "Hello T2", 1234,  ZonedDateTime.now(), ZonedDateTime.now(), true, 20 ));
+			ts.save( new Task(null, "T3", "Hello T3", 1234,  ZonedDateTime.now(), ZonedDateTime.now(), true, 20));
+			ts.save( new Task(null, "T4", "Hello T4", 1234,  ZonedDateTime.now(), ZonedDateTime.now(), true, 20 ));
+			ts.save( new Task(null, "T5", "Hello T5", 1234,  ZonedDateTime.now(), ZonedDateTime.now(), true, 20 ));
 			List<AppRole> l = new ArrayList<>();
 			Stream.of("ADMIN", "SUPER_ADMIN", "USER" ).forEach(s -> {
 				l.add(r.save( new AppRole(null, s)));
@@ -45,6 +47,11 @@ public class GeneriqueConfiguration {
 	@Bean
 	public BCryptPasswordEncoder getBcryptPassworEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+	
+	@Bean
+	public RestTemplate getRestTemplate() {
+		return new RestTemplate();
 	}
 
 }

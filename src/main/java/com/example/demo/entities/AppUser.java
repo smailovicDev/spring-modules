@@ -1,7 +1,7 @@
 package com.example.demo.entities;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -29,5 +29,5 @@ public class AppUser {
 	private String password;
 	
 	@ManyToMany(fetch=FetchType.EAGER)
-	Collection<AppRole> roles = new ArrayList<>();
+	List<AppRole> roles = new ArrayList<>();
 }

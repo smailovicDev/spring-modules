@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.entities.Task;
@@ -17,6 +19,10 @@ public class TasksService {
 
 	public <S extends Task> S save(S entity) {
 		return tasksRepositorie.save(entity);
+	}
+
+	public Page<Task> findAll(Pageable pageable) {
+		return tasksRepositorie.findAll(pageable);
 	}
 
 	public List<Task> findAll() {
