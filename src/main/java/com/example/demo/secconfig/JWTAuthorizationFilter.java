@@ -27,41 +27,64 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		
-		response.addHeader("Access-Control-Allow-Origin", "*");
-		response.addHeader("Access-Control-Allow-Headers",
-				"Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers,authorization");
-		response.addHeader("Access-Control-Expose-Headers",
-				"Access-Control-Allow-Origin, Access-Control-Allow-Credentials, authorization");
-
-		if (request.getMethod().equals("OPTIONS")) {
-			response.setStatus(HttpServletResponse.SC_OK);
-		} else if (request.getRequestURI().equals("/login")) {
-			filterChain.doFilter(request, response);
-			return;
-		} else {
-			String jwtToken = request.getHeader(SecurityConstants.AUTHORIZATION.getValue());
-			System.out.println( " The token "+jwtToken);
-			 if (jwtToken == null || !jwtToken.startsWith(SecurityConstants.TOKENPREFIX.getValue())) {
-	                filterChain.doFilter(request, response);
-	                return;
-	            }
-	            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SecurityConstants.SECRET.getValue())).build();
-	            String jwt = jwtToken.substring(SecurityConstants.TOKENPREFIX.getValue().length());
-	            DecodedJWT decodedJWT = verifier.verify(jwt);
-	            System.out.println("JWT="+jwt);
-	            String username = decodedJWT.getSubject();
-	            List<String> roles = decodedJWT.getClaims().get("roles").asList(String.class);
-	            System.out.println("username="+username);
-	            System.out.println("roles="+roles);
-	            Collection<GrantedAuthority> authorities = new ArrayList<>();
-	            roles.forEach(rn -> {
-	                authorities.add(new SimpleGrantedAuthority(rn));
-	            });
-	            UsernamePasswordAuthenticationToken user =
-	                    new UsernamePasswordAuthenticationToken(username, null, authorities);
-	            SecurityContextHolder.getContext().setAuthentication(user);
-	            filterChain.doFilter(request, response);
-		}
+        response.addHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+        response.addHeader("Access-Control-Allow-Headers", 
+        		"Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers,Authorization");
+        response.addHeader("Access-Control-Expose-Headers", "Access-Control-Allow-Origin, Access-Control-Allow-Credentials, Authorization, Error");
+		
+		if(request.getMethod().equals("OPTIONS")){
+            response.setStatus(HttpServletResponse.SC_OK);
+        }
+        else if(request.getRequestURI().equals("/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        else {
+        	
+        	// get the token form request header 
+            String jwtToken = request.getHeader(SecurityConstants.AUTHORIZATION.getValue());
+            
+            System.out.println(" first "+ request.getHeader("Accept")+ " Second  "+request.getHeader("Content-Type") );
+            
+            // check if the token start with our key if not it's not a good token 
+            if ( jwtToken == null || !jwtToken.startsWith(SecurityConstants.TOKENPREFIX.getValue() )) {
+            	
+            	// redirect the user to authentication page and return
+                filterChain.doFilter(request, response);
+                return;
+            }
+            
+            // remove the prefix from our token 
+            String jwt = jwtToken.substring(SecurityConstants.TOKENPREFIX.getValue().length());
+            
+            System.out.println(jwtToken);
+            
+            // prepare the JWTVerifier set the key and algorithm
+            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SecurityConstants.SECRET.getValue())).build();
+            
+            // decode the token
+            DecodedJWT decodedJWT = verifier.verify(jwt);
+            
+            // get the username from the tocken 
+            String username = decodedJWT.getSubject();
+            
+            // get Roles as list 
+            List<String> roles = decodedJWT.getClaims().get("roles").asList(String.class);
+            
+            // create granted authority from roles list
+            Collection<GrantedAuthority> authorities = new ArrayList<>();
+            roles.forEach(role -> {
+                authorities.add(new SimpleGrantedAuthority(role));
+            });
+            // create user from user name and authorities 
+            UsernamePasswordAuthenticationToken user =
+                    new UsernamePasswordAuthenticationToken(username, null, authorities);
+            // set the user to the security context 
+            SecurityContextHolder.getContext().setAuthentication(user);
+            
+            filterChain.doFilter(request, response);
+            
+        }
 		
 	}
 

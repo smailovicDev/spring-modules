@@ -38,8 +38,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter  {
 		http.authorizeRequests().antMatchers("/error").permitAll()
 		.antMatchers("/roles/**").hasAnyAuthority("SUPER_ADMIN","ADMIN")
 		.antMatchers("/users/**").hasAnyAuthority("SUPER_ADMIN","ADMIN");
-		http.formLogin().permitAll();
 		http.formLogin().defaultSuccessUrl("/tasks");
+		http.formLogin().disable();
 		http.authorizeRequests().anyRequest().authenticated();
 		http.addFilter( new JWTAuthenticationFilter( authenticationManager() )  );
 		http.addFilterBefore( new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class  );

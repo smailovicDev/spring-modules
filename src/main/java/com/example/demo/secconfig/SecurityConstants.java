@@ -5,8 +5,8 @@ public enum SecurityConstants {
 	
 	
 	SECRET("Hello@@Smail@@Hello"),
-	TOKENPREFIX("bearer "),
-	AUTHORIZATION("authorization");
+	TOKENPREFIX("Bearer "),
+	AUTHORIZATION("Authorization");
 	
 	
 	private String value;

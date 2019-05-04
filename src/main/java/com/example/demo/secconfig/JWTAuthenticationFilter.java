@@ -52,21 +52,23 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			// get User from inputStream and cast it by jakson to AppUser object 
 			
 			AppUser appUser = new ObjectMapper().readValue( request.getInputStream() ,AppUser.class);
-			System.out.println( appUser );
+			
 			// Authenticate the user by authenticationManager and return the result authentication
 			return authenticationManager.authenticate( 
 					new UsernamePasswordAuthenticationToken(appUser.getLogin(), appUser.getPassword()));
 		}catch( Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new RuntimeException("Authentication error !!");
+			
 		}
 	}
 
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
+		
 		// get User form authentication object ( spring security user org.springframework.security.core.userdetails.User )
 		User user = (User) authResult.getPrincipal();
+		
 		// get User roles from authentication result and store them in arrayList of String
 		List<String> authorities = new ArrayList<>();
 		authResult.getAuthorities().forEach(a -> {
